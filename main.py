@@ -2,8 +2,24 @@ from fasthtml.common import *
 import jieba
 from dictionary import ChineseDictionary
 import math
+from pathlib import Path
+import time
 
 app,rt = fast_app()
+
+# Initialize database for saved words
+db = database('data/saved_words.db')
+saved_words = db.t.saved_words
+if saved_words not in db.t:
+    saved_words.create(
+        word=str,
+        simplified=str,
+        traditional=str,
+        pinyin=str,
+        definitions=str,
+        timestamp=float,
+        pk='word'
+    )
 
 text_content = ""
 segmented_words = []
@@ -182,6 +198,9 @@ def lookup(word: str):
         # Remove empty definitions and any leading/trailing whitespace
         definitions = [d.strip() for d in definitions if d.strip()]
         
+        # Check if word is saved
+        is_saved = word in saved_words
+        
         return Div(
             H4(
                 Span(result['simplified'], style="margin-right: 10px;"),
@@ -195,9 +214,38 @@ def lookup(word: str):
             Ul(
                 *[Li(d) for d in definitions],
                 style="margin: 0; padding-left: 20px;"
+            ),
+            Button(
+                "★ Saved" if is_saved else "☆ Save",
+                cls=f"save-button {'saved' if is_saved else ''}",
+                hx_post=f"/toggle-save/{word}",
+                hx_target="#definition",
+                style="margin-top: 15px;"
             )
         )
     else:
         return P(f"No definition found for: {word}", style="color: var(--muted-color);")
+
+@rt('/toggle-save/{word}')
+def post(word: str):
+    result = dictionary.lookup(word)
+    if not result:
+        return P(f"Error: Word not found", style="color: var(--error-color);")
+    
+    # If word exists, remove it; if not, add it
+    if word in saved_words:
+        saved_words.delete(word)
+    else:
+        saved_words.insert({
+            'word': word,
+            'simplified': result['simplified'],
+            'traditional': result['traditional'],
+            'pinyin': result['pinyin'],
+            'definitions': '\n'.join(result['definitions']),
+            'timestamp': time.time()
+        })
+    
+    # Return the updated lookup view
+    return lookup(word)
 
 serve()

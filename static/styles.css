@@ -94,4 +94,27 @@
     min-height: 200px;
     display: flex;
     flex-direction: column;
+}
+
+.save-button {
+    background: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    padding: 5px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.save-button:hover {
+    background: var(--card-sectionning-background-color);
+}
+
+.save-button.saved {
+    background: var(--primary);
+    color: var(--primary-inverse);
+    border-color: var(--primary);
+}
+
+.save-button.saved:hover {
+    opacity: 0.9;
 } 
