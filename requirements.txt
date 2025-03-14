@@ -1,0 +1,2 @@
+python-fasthtml
+jieba>=0.42.1 
