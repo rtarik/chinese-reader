@@ -91,7 +91,8 @@ def get():
                 id="definition"
             ),
             cls="definition-card"
-        )
+        ),
+        A("View Saved Words →", href="/saved-words", id="view-saved-words")
     )
 
 @rt('/show-input')
@@ -227,7 +228,7 @@ def lookup(word: str):
         return P(f"No definition found for: {word}", style="color: var(--muted-color);")
 
 @rt('/toggle-save/{word}')
-def post(word: str):
+def post(word: str, request):
     result = dictionary.lookup(word)
     if not result:
         return P(f"Error: Word not found", style="color: var(--error-color);")
@@ -235,6 +236,26 @@ def post(word: str):
     # If word exists, remove it; if not, add it
     if word in saved_words:
         saved_words.delete(word)
+        # Check if we're removing from the saved words list
+        if request.headers.get("HX-Target", "").startswith("saved-word-"):
+            # Get updated count
+            word_count = len(saved_words())
+            # Return both the empty string for the card and the updated header
+            return (
+                "",  # Empty string to remove the card
+                Div(
+                    Span(f"{word_count} word{'s' if word_count != 1 else ''} saved", cls="word-count"),
+                    Button(
+                        "Start Review →",
+                        hx_post="/review",
+                        cls="review-button",
+                        disabled=word_count == 0
+                    ),
+                    cls="saved-words-header",
+                    id="saved-words-header",
+                    hx_swap_oob="true"
+                )
+            )
     else:
         saved_words.insert({
             'word': word,
@@ -245,7 +266,55 @@ def post(word: str):
             'timestamp': time.time()
         })
     
-    # Return the updated lookup view
+    # Return the updated lookup view (only for the dictionary view)
     return lookup(word)
+
+@rt('/saved-words')
+def get():
+    # Get all saved words ordered by most recently saved
+    words = saved_words(order_by='-timestamp')
+    word_count = len(words)
+    
+    return Container(
+        Link(href="/static/styles.css", rel="stylesheet"),
+        H2("Saved Words"),
+        Div(
+            A("← Back to Reader", href="/", cls="back-link"),
+            Div(
+                Span(f"{word_count} word{'s' if word_count != 1 else ''} saved", cls="word-count"),
+                Button(
+                    "Start Review →",
+                    hx_post="/review",
+                    cls="review-button",
+                    disabled=word_count == 0
+                ),
+                cls="saved-words-header",
+                id="saved-words-header"
+            ),
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"
+        ),
+        Div(
+            *[
+                Card(
+                    Div(
+                        Span(word['simplified'], cls="saved-word-text"),
+                        Span(f"[{word['pinyin']}]", cls="saved-word-pinyin"),
+                        Button(
+                            "★",
+                            cls="save-button saved compact",
+                            hx_post=f"/toggle-save/{word['word']}",
+                            hx_target=f"#saved-word-{word['word']}",
+                            hx_swap="outerHTML"
+                        ),
+                        cls="saved-word-row"
+                    ),
+                    cls="saved-word-card",
+                    id=f"saved-word-{word['word']}"
+                )
+                for word in words
+            ],
+            id="saved-words-list"
+        )
+    )
 
 serve()

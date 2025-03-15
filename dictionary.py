@@ -115,6 +115,11 @@ class ChineseDictionary:
             # Handle 'u:' or 'v' to 'ü'
             base = base.replace('u:', 'ü').replace('v', 'ü')
             
+            # For neutral tone (tone 5), keep the original vowel without tone mark
+            if tone == 5:
+                result.append(base)
+                continue
+            
             # Find the vowel to modify based on priority
             vowel_index = -1
             vowel_to_change = 'a'
@@ -130,7 +135,7 @@ class ChineseDictionary:
                 if vowel_to_change == 'ü':
                     vowel_to_change = 'v'
                 # Get the tone marked vowel
-                tone_index = tone - 1 if tone > 0 else 0
+                tone_index = tone - 1
                 tone_vowel = self._TONE_MARKS[vowel_to_change][tone_index]
                 # Replace the vowel with tone marked version
                 if vowel_to_change == 'v':

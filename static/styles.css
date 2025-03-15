@@ -117,4 +117,102 @@
 
 .save-button.saved:hover {
     opacity: 0.9;
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--muted-color);
+    text-decoration: none;
+    margin: 0;
+}
+
+.back-link:hover {
+    color: var(--primary);
+}
+
+#saved-words-list {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+}
+
+.saved-word-card {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.saved-word-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    gap: 10px;
+}
+
+.saved-word-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.saved-word-pinyin {
+    color: var(--muted-color);
+    font-size: 0.9rem;
+    flex-grow: 1;
+}
+
+.save-button.compact {
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 1rem;
+    min-width: 40px;
+}
+
+#view-saved-words {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    background: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+#view-saved-words:hover {
+    background: var(--card-sectionning-background-color);
+}
+
+.saved-words-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.word-count {
+    font-size: 1.1em;
+    color: var(--muted-color);
+}
+
+.review-button {
+    background-color: var(--primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.review-button:hover:not([disabled]) {
+    background-color: var(--primary-hover);
+}
+
+.review-button[disabled] {
+    background-color: var(--muted-color);
+    cursor: not-allowed;
+    opacity: 0.7;
 } 
