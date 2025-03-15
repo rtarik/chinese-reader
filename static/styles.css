@@ -196,23 +196,79 @@
     color: var(--muted-color);
 }
 
-.review-button {
-    background-color: var(--primary);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s;
-}
-
-.review-button:hover:not([disabled]) {
-    background-color: var(--primary-hover);
-}
-
 .review-button[disabled] {
-    background-color: var(--muted-color);
+    opacity: 0.5;
     cursor: not-allowed;
-    opacity: 0.7;
+}
+
+/* Flashcard styles */
+.flashcard {
+    background: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 500px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.flashcard:hover {
+    background: var(--card-sectionning-background-color);
+}
+
+.flashcard h3 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.flashcard-front {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+.correct-btn, .incorrect-btn {
+    padding: 0.75rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.correct-btn {
+    background-color: var(--form-element-valid-border-color);
+    color: var(--card-background-color);
+    border: none;
+}
+
+.incorrect-btn {
+    background-color: var(--form-element-invalid-border-color);
+    color: var(--card-background-color);
+    border: none;
+}
+
+.correct-btn:hover, .incorrect-btn:hover {
+    transform: scale(1.1);
+}
+
+.correct-btn:active, .incorrect-btn:active {
+    transform: scale(0.95);
+}
+
+#review-progress {
+    color: var(--muted-color);
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
 } 
