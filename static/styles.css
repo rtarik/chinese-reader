@@ -103,10 +103,13 @@
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all 0.2s ease;
+    color: var(--contrast);
 }
 
 .save-button:hover {
     background: var(--card-sectionning-background-color);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .save-button.saved {
