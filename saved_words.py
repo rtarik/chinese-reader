@@ -24,19 +24,19 @@ def mk_flashcard(word: SavedWord, answer_revealed: bool = False) -> Card:
     if answer_revealed:
         return Div(
             H3(word.simplified, style="text-align: center; margin-bottom: 10px;"),
-            P(f"[{word.pinyin}]", style="text-align: center; color: var(--muted-color); margin-bottom: 15px;"),
-            P(word.traditional, style="text-align: center; color: var(--muted-color); margin-bottom: 15px;") if word.traditional != word.simplified else None,
+            P(f"[{word.pinyin}]", style="text-align: center; color: var(--pico-muted-color); margin-bottom: 15px;"),
+            P(word.traditional, style="text-align: center; color: var(--pico-muted-color); margin-bottom: 15px;") if word.traditional != word.simplified else None,
             Div(
                 *[P(d, style="margin: 5px 0;") for d in word.definitions.split('\n')],
                 style="text-align: center; margin-bottom: 20px;"
             ),
             Div(
-                Button("✅", hx_post=f"/review/answer/correct/{word.word}", hx_target="#review-area", cls="correct-btn"),
-                Button("❌", hx_post=f"/review/answer/incorrect/{word.word}", hx_target="#review-area", cls="incorrect-btn"),
+                Button("✓", hx_post=f"/review/answer/correct/{word.word}", hx_target="#review-area", cls="correct-btn"),
+                Button("✕", hx_post=f"/review/answer/incorrect/{word.word}", hx_target="#review-area", cls="incorrect-btn"),
                 style="display: flex; justify-content: center; gap: 10px;"
             ),
             cls="flashcard",
-            style="margin: 0 auto; max-width: 500px; padding: 20px; border: 1px solid var(--card-border-color); border-radius: var(--border-radius); background: var(--card-background-color);"
+            style="margin: 0 auto; max-width: 500px; padding: 20px; border: 1px solid var(--pico-card-border-color); border-radius: var(--pico-border-radius); background: var(--pico-card-background-color);"
         )
     else:
         return Card(
@@ -60,7 +60,7 @@ def setup_routes(app, lookup_func):
         words = get_all_saved_words(order_by='-timestamp')
         word_count = len(words)
         
-        return Container(
+        return Title("Chinese Reader"), Container(
             Link(href="/static/styles.css", rel="stylesheet"),
             H2("Saved Words"),
             Div(
@@ -110,7 +110,7 @@ def setup_routes(app, lookup_func):
     def post(word: str, request):
         result = dictionary.lookup(word)
         if not result:
-            return P(f"Error: Word not found", style="color: var(--error-color);")
+            return P(f"Error: Word not found", style="color: var(--pico-error-color);")
         
         # If word exists, remove it; if not, add it
         if is_word_saved(word):
@@ -217,7 +217,7 @@ def setup_routes(app, lookup_func):
         if not all_saved_words:
             return Div(
                 Div(
-                    P("No words available for review.", style="text-align: center; color: var(--muted-color);"),
+                    P("No words available for review.", style="text-align: center; color: var(--pico-muted-color);"),
                     id="saved-words-list"
                 ),
                 id="review-area"
@@ -228,7 +228,7 @@ def setup_routes(app, lookup_func):
         if not session or not session.current_word:
             return Div(
                 Div(
-                    P("No words available for review.", style="text-align: center; color: var(--muted-color);"),
+                    P("No words available for review.", style="text-align: center; color: var(--pico-muted-color);"),
                     id="saved-words-list"
                 ),
                 id="review-area"
@@ -241,7 +241,7 @@ def setup_routes(app, lookup_func):
                     Div(
                         P(
                             f"Card 1 of {session.total_words}", 
-                            style="text-align: center; color: var(--muted-color); margin: 20px 0 5px;"
+                            style="text-align: center; color: var(--pico-muted-color); margin: 20px 0 5px;"
                         ),
                         mk_flashcard(session.current_word),
                         style="display: flex; flex-direction: column; align-items: center;"
@@ -351,7 +351,7 @@ def setup_routes(app, lookup_func):
                 Div(
                     P(
                         f"Card {session.current_index + 1} of {session.total_words}",
-                        style="text-align: center; color: var(--muted-color); margin: 20px 0 5px;"
+                        style="text-align: center; color: var(--pico-muted-color); margin: 20px 0 5px;"
                     ),
                     mk_flashcard(next_word),
                     style="display: flex; flex-direction: column; align-items: center;"

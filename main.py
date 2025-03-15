@@ -23,8 +23,7 @@ def mk_textarea():
             Textarea(
                 placeholder="Paste your Chinese text here...",
                 name="content",
-                id="content-input",
-                style="width: 100%; height: 150px; margin-bottom: 10px;"
+                id="content-input"
             ),
             Button("Submit", type="submit"),
             hx_post="/",
@@ -39,7 +38,8 @@ def mk_word_span(word):
         word,
         cls="chinese-word",
         hx_post=f"/lookup/{word}",
-        hx_target="#definition",
+        hx_target="#definition-card",
+        hx_swap="outerHTML",
         hx_indicator="#loading"
     )
 
@@ -65,8 +65,7 @@ def get():
                 Textarea(
                     placeholder="Paste your Chinese text here...",
                     name="content",
-                    id="content-input",
-                    style="width: 100%; height: 150px; margin-bottom: 10px;"
+                    id="content-input"
                 ),
                 Button("Submit", type="submit"),
                 hx_post="/",
@@ -102,7 +101,8 @@ def get():
         ),
         Card(
             Div(id="definition"),
-            cls="definition-card",
+            id="definition-card",
+            style="display: none;"
         ),
         A("View Saved Words →", href="/saved-words", id="view-saved-words")
     )
@@ -113,8 +113,7 @@ def post():
         Textarea(
             placeholder="Paste your Chinese text here...",
             name="content",
-            id="content-input",
-            style="width: 100%; height: 150px; margin-bottom: 10px;"
+            id="content-input"
         ),
         Button("Submit", type="submit"),
         hx_post="/",
@@ -158,7 +157,7 @@ async def post(request):
     if not text_content:
         return (
             Div(
-                P("Please enter some text to segment.", style="color: var(--muted-color);"),
+                P("Please enter some text to segment.", style="color: var(--pico-muted-color);"),
                 id="result",
                 hx_swap_oob="true"
             ),
@@ -218,6 +217,9 @@ async def post(request):
     )
 
 @rt('/lookup/{word}')
+def post(word: str):
+    return lookup(word)
+
 def lookup(word: str):
     result = dictionary.lookup(word)
     
@@ -229,14 +231,15 @@ def lookup(word: str):
         # Check if word is saved
         is_saved = is_word_saved(word)
         
-        return Div(
+        return Card(
+            Div(
             H4(
                 Span(result['simplified'], style="margin-right: 10px;"),
-                Span(f"[{result['pinyin']}]", style="color: var(--muted-color); font-weight: normal;"),
+                Span(f"[{result['pinyin']}]", style="color: var(--pico-muted-color); font-weight: normal;"),
                 style="margin-bottom: 10px;"
             ),
             P(
-                Span(result['traditional'], style="color: var(--muted-color);"),
+                Span(result['traditional'], style="color: var(--pico-muted-color);"),
                 style="margin-bottom: 15px; font-size: 0.9em;"
             ) if result['traditional'] != result['simplified'] else None,
             Ul(
@@ -249,10 +252,13 @@ def lookup(word: str):
                 hx_post=f"/toggle-save/{word}",
                 hx_target="#definition",
                 style="margin-top: 15px;"
-            )
+            ),
+            id="definition"
+            ),
+            id="definition-card"
         )
     else:
-        return P(f"No definition found for: {word}", style="color: var(--muted-color);")
+        return Card(P(f"No definition found for: {word}", style="color: var(--pico-muted-color);"), id="definition-card")
 
 # Set up saved words routes
 saved_words.setup_routes(app, lookup)
